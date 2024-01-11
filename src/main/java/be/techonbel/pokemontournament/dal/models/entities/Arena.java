@@ -3,11 +3,13 @@ package be.techonbel.pokemontournament.dal.models.entities;
 import be.techonbel.pokemontournament.dal.models.entities.enums.Status;
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Data;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.LocalDate;
 
 @Entity
+@Data
 public class Arena {
 
     @Id

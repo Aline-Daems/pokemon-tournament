@@ -4,7 +4,9 @@ import be.techonbel.pokemontournament.bl.services.PlayerService;
 import be.techonbel.pokemontournament.dal.models.entities.Player;
 import be.techonbel.pokemontournament.dal.repositories.PlayerRepository;
 import be.techonbel.pokemontournament.pl.forms.Playerform;
+import org.springframework.stereotype.Service;
 
+@Service
 public class PlayerServiceImpl implements PlayerService {
 
     private final PlayerRepository playerRepository;
@@ -12,7 +14,6 @@ public class PlayerServiceImpl implements PlayerService {
     public PlayerServiceImpl(PlayerRepository playerRepository) {
         this.playerRepository = playerRepository;
     }
-
 
     @Override
     public void create(Playerform form) {
@@ -31,7 +32,6 @@ public class PlayerServiceImpl implements PlayerService {
         player.setRole(form.role());
 
         playerRepository.save(player);
-
 
 
     }

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import java.time.LocalDate;
 
 public record Playerform(
-
         String pseudo,
         String mail,
         String password,
