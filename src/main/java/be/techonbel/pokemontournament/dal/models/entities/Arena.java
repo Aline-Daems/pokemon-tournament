@@ -1,10 +1,9 @@
 package be.techonbel.pokemontournament.dal.models.entities;
 
 import be.techonbel.pokemontournament.dal.models.entities.enums.Status;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.Builder;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.LocalDate;
 
@@ -19,13 +18,13 @@ public class Arena {
     private int nbMinPlayer;
     private int nbMaxPlayer;
     private String type;
-    private Status status;
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.pending;
     private int round;
     private Boolean womenOnly;
     private LocalDate closingDate;
     private  LocalDate creationDate;
     private  LocalDate updateDate;
-
 
 
 }
