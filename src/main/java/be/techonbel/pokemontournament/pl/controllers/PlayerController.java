@@ -1,6 +1,8 @@
 package be.techonbel.pokemontournament.pl.controllers;
 
 import be.techonbel.pokemontournament.bl.services.PlayerService;
+import be.techonbel.pokemontournament.pl.dtos.AuthDTO;
+import be.techonbel.pokemontournament.pl.forms.LoginForm;
 import be.techonbel.pokemontournament.pl.forms.Playerform;
 //import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,4 +25,10 @@ public class PlayerController {
     public void createPlayer(@RequestBody Playerform form){
         playerService.create(form);
     }
+
+    @PostMapping("/login")
+    public AuthDTO login(@RequestBody LoginForm form){
+        return playerService.login(form);
+    }
+
 }
