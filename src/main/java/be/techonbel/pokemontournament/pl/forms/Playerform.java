@@ -6,6 +6,7 @@ import jakarta.persistence.Column;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public record Playerform(
         String pseudo,
@@ -14,6 +15,6 @@ public record Playerform(
         LocalDate birthdate,
         Gender gender,
         int badges,
-        Roles role
+        List<Roles>  role
 ) {
 }

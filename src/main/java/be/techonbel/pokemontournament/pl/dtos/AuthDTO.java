@@ -7,7 +7,7 @@ import org.aspectj.weaver.patterns.IToken;
 
 import java.util.List;
 
-@Data
+
 @Builder
 public record AuthDTO(
 

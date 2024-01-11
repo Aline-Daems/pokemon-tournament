@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Data
-public class Player  extends UserDetails {
+public class Player  implements UserDetails {
 
     @Id
     @GeneratedValue(strategy =  GenerationType.AUTO)
