@@ -10,9 +10,9 @@ import java.util.List;
 
 @Builder
 public record AuthDTO(
-
-        String pseudo,
         String Token,
+        String pseudo,
+
         List<Roles> roles
 
 ) {

@@ -15,6 +15,7 @@ public record Playerform(
         LocalDate birthdate,
         Gender gender,
         int badges,
-        List<Roles>  role
+        List<Roles>  role,
+        List<Long> arenaId
 ) {
 }

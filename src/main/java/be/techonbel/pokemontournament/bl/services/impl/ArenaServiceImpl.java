@@ -2,17 +2,32 @@ package be.techonbel.pokemontournament.bl.services.impl;
 
 import be.techonbel.pokemontournament.bl.services.ArenaService;
 import be.techonbel.pokemontournament.dal.models.entities.Arena;
+import be.techonbel.pokemontournament.dal.models.entities.enums.Status;
 import be.techonbel.pokemontournament.dal.repositories.ArenaRepository;
+import be.techonbel.pokemontournament.dal.repositories.PlayerRepository;
+import be.techonbel.pokemontournament.pl.dtos.ArenaDTO;
+import be.techonbel.pokemontournament.pl.dtos.ArenaGetOneDTO;
 import be.techonbel.pokemontournament.pl.forms.ArenaForm;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class ArenaServiceImpl implements ArenaService {
 
     private final ArenaRepository arenaRepository;
+    private final PlayerRepository playerRepository;
 
-    public ArenaServiceImpl(ArenaRepository arenaRepository) {
+
+
+    public ArenaServiceImpl(ArenaRepository arenaRepository, PlayerRepository playerRepository) {
         this.arenaRepository = arenaRepository;
+
+        this.playerRepository = playerRepository;
     }
 
     @Override
@@ -22,21 +37,51 @@ public class ArenaServiceImpl implements ArenaService {
             throw  new IllegalArgumentException("Le formulaire ne peut pas être vide");
         }
 
-
         Arena arena = new Arena();
 
         arena.setCity(form.city());
-        arena.setNbMinPlayer(form.nbMinPlayer());
-        arena.setNbMaxPlayer(form.nbMaxPlayer());
         arena.setType(form.type());
+        arena.setNbPlayer(form.nbPlayer());
         arena.setStatus(form.status());
         arena.setRound(form.round());
-        arena.setWomenOnly(form.womenOnly());
-        arena.setClosingDate(form.closingDate());
-        arena.setCreationDate(form.creationDate().now());
-        arena.setUpdateDate(form.updateDate());
+        if(form.womenOnly() == null){
+            arena.setWomenOnly(false);
+        }else{
+            arena.setWomenOnly(true);
+        }
+        arena.setCreationDate(form.creationDate().now().plusDays(form.nbPlayer()));
+        arena.setUpdateDate(form.updateDate().now().plusDays(form.nbPlayer()));
+        LocalDate closingDate = arena.getCreationDate();
+        arena.setClosingDate(closingDate.plusDays(form.nbPlayer()));
+
+        arena.setPlayers(new ArrayList<>(playerRepository.findAllById((form.playerId()))));
 
         arenaRepository.save(arena);
 
     }
+
+    @Override
+    public Arena getOne(Long id) {
+        return arenaRepository.findByArenaId(id).orElseThrow(EntityNotFoundException::new);
+
+        //todo rajouter les joueurs
+    }
+
+    @Override
+    public void delete(Long id) {
+       Arena arena =  arenaRepository.getOne(id);
+       if(arena.getStatus() == Status.inProgress)
+           throw new IllegalArgumentException("Yann pas content!");
+
+            arenaRepository.deleteById(id);
+
+    }
+
+    @Override
+    public List<Arena> getAll() {
+        return arenaRepository.findTop10AllByOrderByUpdateDateDesc();
+    }
+
+
+
 }

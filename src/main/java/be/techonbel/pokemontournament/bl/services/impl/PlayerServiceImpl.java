@@ -2,6 +2,7 @@ package be.techonbel.pokemontournament.bl.services.impl;
 
 import be.techonbel.pokemontournament.bl.services.PlayerService;
 import be.techonbel.pokemontournament.dal.models.entities.Player;
+import be.techonbel.pokemontournament.dal.repositories.ArenaRepository;
 import be.techonbel.pokemontournament.dal.repositories.PlayerRepository;
 import be.techonbel.pokemontournament.pl.config.security.JWTProvider;
 import be.techonbel.pokemontournament.pl.dtos.AuthDTO;
@@ -12,20 +13,25 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
 public class PlayerServiceImpl implements PlayerService {
 
     private final PlayerRepository playerRepository;
+
+    private final ArenaRepository arenaRepository;
     private final AuthenticationManager authenticationManager;
 
     private final JWTProvider jwtProvider;
 
     private final PasswordEncoder passwordEncoder;
 
-    public PlayerServiceImpl(PlayerRepository playerRepository, AuthenticationManager authenticationManager, JWTProvider jwtProvider, PasswordEncoder passwordEncoder) {
+    public PlayerServiceImpl(PlayerRepository playerRepository, ArenaRepository arenaRepository, AuthenticationManager authenticationManager, JWTProvider jwtProvider, PasswordEncoder passwordEncoder) {
         this.playerRepository = playerRepository;
+        this.arenaRepository = arenaRepository;
         this.authenticationManager = authenticationManager;
         this.jwtProvider = jwtProvider;
         this.passwordEncoder = passwordEncoder;
@@ -41,12 +47,12 @@ public class PlayerServiceImpl implements PlayerService {
         Player player = new Player();
         player.setPseudo(form.pseudo());
         player.setMail(form.mail());
-        player.setPassword(form.password());
+        player.setPassword(passwordEncoder.encode(form.password()));
         player.setBirthdate(form.birthdate());
         player.setGender(form.gender());
         player.setBadges(form.badges());
         player.setRole(form.role());
-
+        player.setArenas(new ArrayList<>(arenaRepository.findAllById(form.arenaId())));
         playerRepository.save(player);
 
 

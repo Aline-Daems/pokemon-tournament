@@ -6,6 +6,5 @@ import be.techonbel.pokemontournament.pl.forms.Playerform;
 
 public interface PlayerService {
     void create(Playerform form);
-
     AuthDTO login(LoginForm form);
 }

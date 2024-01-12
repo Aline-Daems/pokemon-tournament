@@ -13,6 +13,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,9 +35,10 @@ public class Player  implements UserDetails {
     @Value("0")
     private int badges;
     @Enumerated(value = EnumType.STRING)
-
     private List<Roles> role;
-
+    @ManyToMany
+    @JoinTable(name="register", joinColumns = @JoinColumn(name="arenaId"), inverseJoinColumns = @JoinColumn(name="playerId"))
+    private List<Arena> arenas = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -67,6 +69,6 @@ public class Player  implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return isEnabled();
+        return true;
     }
 }
