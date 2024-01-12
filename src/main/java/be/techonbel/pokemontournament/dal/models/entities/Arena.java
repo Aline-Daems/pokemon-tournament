@@ -22,12 +22,16 @@ public class Arena {
     private Long arenaId;
     private String city;
     @Min(2)
+    private int nbMinPlayer;
     @Max(32)
+    private int nbMaxPlayer;
     private int nbPlayer;
     private String type;
     @Enumerated(EnumType.STRING)
     private Status status = Status.pending;
     private int round;
+    private int badgeMin;
+    private int badgeMax;
     @Value("false")
     private Boolean womenOnly;
     private LocalDate closingDate;

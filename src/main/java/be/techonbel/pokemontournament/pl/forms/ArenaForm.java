@@ -11,10 +11,15 @@ import java.util.List;
 
 public record ArenaForm(
         String city,
+        int nbMinPlayer,
+
+        int nbMaxPlayer,
         int nbPlayer,
         String type,
         Status status,
         int round,
+        int badgeMin,
+        int badgeMax,
         Boolean womenOnly,
         LocalDate creationDate,
         LocalDate updateDate,

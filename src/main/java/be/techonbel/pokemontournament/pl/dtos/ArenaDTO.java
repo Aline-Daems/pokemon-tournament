@@ -13,16 +13,20 @@ import java.time.LocalDate;
 public record ArenaDTO(
         Long arenaId,
         String city,
-
+        int nbMinPlayer,
+        int nbMaxPlayer,
         int nbPlayer,
         String type,
         Status status,
         int round,
-        LocalDate closingDate
 
-        ) {
+        int badgeMin,
+        int badgeMax,
+        LocalDate closingDate)
+
+         {
 
     public static ArenaDTO fromEntity(Arena arena){
-        return  new ArenaDTO(arena.getArenaId(), arena.getCity(), arena.getNbPlayer(), arena.getType(), arena.getStatus(), arena.getRound(), arena.getClosingDate());
+        return  new ArenaDTO(arena.getArenaId(), arena.getCity(), arena.getNbPlayer(), arena.getNbMinPlayer(), arena.getNbMaxPlayer(),  arena.getType(), arena.getStatus(), arena.getRound(), arena.getBadgeMin(), arena.getBadgeMax(), arena.getClosingDate());
     }
 }

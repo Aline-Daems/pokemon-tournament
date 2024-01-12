@@ -32,9 +32,10 @@ public class JWTProvider {
     }
 
 
-    public String generateToken(String username, List<Roles> roles) {
+    public String generateToken(String username, String email , List<Roles> roles) {
         return TOKEN_PREFIX + JWT.create()
                 .withSubject(username)
+                .withSubject(email)
                 .withClaim("roles", roles.stream().map(Enum::toString).toList())
                 .withExpiresAt(Instant.now().plusMillis(EXPIRES_AT))
                 .sign(Algorithm.HMAC512(JWT_SECRET));

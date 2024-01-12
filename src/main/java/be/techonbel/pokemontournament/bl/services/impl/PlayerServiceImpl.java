@@ -1,7 +1,9 @@
 package be.techonbel.pokemontournament.bl.services.impl;
 
 import be.techonbel.pokemontournament.bl.services.PlayerService;
+import be.techonbel.pokemontournament.dal.models.entities.Arena;
 import be.techonbel.pokemontournament.dal.models.entities.Player;
+import be.techonbel.pokemontournament.dal.models.entities.enums.Status;
 import be.techonbel.pokemontournament.dal.repositories.ArenaRepository;
 import be.techonbel.pokemontournament.dal.repositories.PlayerRepository;
 import be.techonbel.pokemontournament.pl.config.security.JWTProvider;
@@ -53,6 +55,7 @@ public class PlayerServiceImpl implements PlayerService {
         player.setBadges(form.badges());
         player.setRole(form.role());
         player.setArenas(new ArrayList<>(arenaRepository.findAllById(form.arenaId())));
+
         playerRepository.save(player);
 
 
@@ -64,7 +67,7 @@ public class PlayerServiceImpl implements PlayerService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(form.getPseudo(), form.getPassword()));
         Player player = playerRepository.findByPseudo(form.getPseudo()).get();
 
-        String token = jwtProvider.generateToken(player.getUsername(), List.copyOf(player.getRole()));
+        String token = jwtProvider.generateToken(player.getUsername(), player.getMail(),   List.copyOf(player.getRole()));
         AuthDTO authDTO = AuthDTO.create(token, player.getPseudo(), player.getRole() );
         return authDTO;
 

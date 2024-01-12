@@ -12,7 +12,6 @@ import java.util.List;
 public record AuthDTO(
         String Token,
         String pseudo,
-
         List<Roles> roles
 
 ) {

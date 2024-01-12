@@ -41,9 +41,15 @@ public class ArenaServiceImpl implements ArenaService {
 
         arena.setCity(form.city());
         arena.setType(form.type());
+        arena.setNbMaxPlayer(form.nbMaxPlayer());
+        if (form.nbMinPlayer()>form.nbMaxPlayer())
+            throw  new RuntimeException("Yann pas content");
+        arena.setNbMinPlayer(form.nbMinPlayer());
         arena.setNbPlayer(form.nbPlayer());
         arena.setStatus(form.status());
         arena.setRound(form.round());
+        arena.setBadgeMin(form.badgeMin());
+        arena.setBadgeMax(form.badgeMax());
         if(form.womenOnly() == null){
             arena.setWomenOnly(false);
         }else{
