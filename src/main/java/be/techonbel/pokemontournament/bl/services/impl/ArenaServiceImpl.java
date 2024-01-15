@@ -2,6 +2,7 @@ package be.techonbel.pokemontournament.bl.services.impl;
 
 import be.techonbel.pokemontournament.bl.services.ArenaService;
 import be.techonbel.pokemontournament.dal.models.entities.Arena;
+import be.techonbel.pokemontournament.dal.models.entities.Player;
 import be.techonbel.pokemontournament.dal.models.entities.enums.Status;
 import be.techonbel.pokemontournament.dal.repositories.ArenaRepository;
 import be.techonbel.pokemontournament.dal.repositories.PlayerRepository;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ArenaServiceImpl implements ArenaService {
@@ -68,9 +70,10 @@ public class ArenaServiceImpl implements ArenaService {
 
     @Override
     public Arena getOne(Long id) {
-        return arenaRepository.findByArenaId(id).orElseThrow(EntityNotFoundException::new);
+        Arena arena=  arenaRepository.findByArenaIdWithPlayer(id).orElseThrow(EntityNotFoundException::new);
 
-        //todo rajouter les joueurs
+        return  arena;
+
     }
 
     @Override
