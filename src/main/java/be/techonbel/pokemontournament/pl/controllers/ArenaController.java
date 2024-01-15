@@ -39,11 +39,16 @@ public class ArenaController {
         return ResponseEntity.ok(dtos);
     }
 
-       @GetMapping("/{id}")
-       public  ResponseEntity<ArenaDTO> getOne(@PathVariable Long id) {
-
+    @GetMapping("/{id}")
+    public  ResponseEntity<ArenaDTO> getOne(@PathVariable Long id) {
         return ResponseEntity.ok(ArenaDTO.fromEntity(arenaService.getOne(id)));
 
 
     }
+
+    @PutMapping("/start/{id}")
+    public void start(@PathVariable Long id) {
+        arenaService.start(id);
+    }
+
 }

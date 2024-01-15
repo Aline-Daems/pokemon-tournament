@@ -41,5 +41,8 @@ public class Arena {
     private List<Player> players = new ArrayList<>();
 
 
+    public void incrementNbPlayer(){
+        this.nbPlayer++;
+    }
 
 }

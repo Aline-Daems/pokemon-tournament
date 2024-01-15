@@ -12,6 +12,9 @@ public interface ArenaService {
     Arena getOne(Long id);
     void delete(Long id);
     List<Arena> getAll();
+    void start(Long id);
 
-//    ToRegister getRegister(Long id);
+
+
+
 }

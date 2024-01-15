@@ -1,8 +1,10 @@
 package be.techonbel.pokemontournament.dal.models.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
+@Data
 public class Match {
 
     @Id
@@ -13,8 +15,12 @@ public class Match {
     private String result;
 
     @ManyToOne
-    @JoinColumn(name="playerId")
-    private Player player;
+    @JoinColumn(name="player1Id")
+    private Player player1;
+
+    @ManyToOne
+    @JoinColumn(name="player2Id")
+    private Player player2;
 
     @ManyToOne
     @JoinColumn(name="arenaId")

@@ -10,6 +10,7 @@ import be.techonbel.pokemontournament.pl.config.security.JWTProvider;
 import be.techonbel.pokemontournament.pl.dtos.AuthDTO;
 import be.techonbel.pokemontournament.pl.forms.LoginForm;
 import be.techonbel.pokemontournament.pl.forms.Playerform;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -54,11 +55,22 @@ public class PlayerServiceImpl implements PlayerService {
         player.setGender(form.gender());
         player.setBadges(form.badges());
         player.setRole(form.role());
-        player.setArenas(new ArrayList<>(arenaRepository.findAllById(form.arenaId())));
+        List<Arena> playerArenas = arenaRepository.findAllById(form.arenaId());
 
+        for (Arena arena : playerArenas) {
+
+            arena.incrementNbPlayer();
+        }
+
+        player.setArenas(new ArrayList<>(playerArenas));
         playerRepository.save(player);
 
 
+    }
+
+    @Override
+    public Player getOne(Long id) {
+        return playerRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
