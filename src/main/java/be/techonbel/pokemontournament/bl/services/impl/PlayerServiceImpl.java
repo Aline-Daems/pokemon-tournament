@@ -45,8 +45,8 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public void create(Playerform form) {
 
-        if(form == null){
-            throw  new IllegalArgumentException("Le formulaire ne peut pas être vide");
+        if (form == null) {
+            throw new IllegalArgumentException("Le formulaire ne peut pas être vide");
         }
 
         Player player = new Player();
@@ -60,49 +60,48 @@ public class PlayerServiceImpl implements PlayerService {
         List<Arena> playerArenas = arenaRepository.findAllById(form.arenaId());
         LocalDate date = LocalDate.now();
         for (Arena arena : playerArenas) {
-            if (arena.getNbPlayer() < arena.getNbMaxPlayer()){
+            if (arena.getNbPlayer() < arena.getNbMaxPlayer()) {
                 arena.incrementNbPlayer();
 
-            if (arena.getBadgeMin() <= player.getBadges()) {
-                if((player.getGender() == Gender.female && arena.getWomenOnly() ) || (player.getGender() == Gender.male && !arena.getWomenOnly())){
-                    if(arena.getStatus() != Status.inProgress && !arena.getClosingDate().isBefore(date)){
-                        LocalDate birthdate = player.getBirthdate();
-                        LocalDate endDate = arena.getClosingDate();
+                if (arena.getBadgeMin() <= player.getBadges()) {
+                    if ((player.getGender() == Gender.female && arena.getWomenOnly()) || (player.getGender() == Gender.male && !arena.getWomenOnly())) {
+                        if (arena.getStatus() != Status.inProgress && !arena.getClosingDate().isBefore(date)) {
+                            LocalDate birthdate = player.getBirthdate();
+                            LocalDate endDate = arena.getClosingDate();
 
-                        Period agePeriod = Period.between(birthdate, endDate);
+                            Period agePeriod = Period.between(birthdate, endDate);
 
-                        int age = agePeriod.getYears();
+                            int age = agePeriod.getYears();
 
-                        if(age <18 ) {
-                            player.setCategory(Category.Junior);
-                        }else if ( age >= 18 && age < 60){
-                            player.setCategory(Category.Senior);
-                        }else {
-                            player.setCategory(Category.Veteran);
+                            if (age < 18) {
+                                player.setCategory(Category.Junior);
+                            } else if (age >= 18 && age < 60) {
+                                player.setCategory(Category.Senior);
+                            } else {
+                                player.setCategory(Category.Veteran);
+                            }
+
+                            if (player.getCategory() == arena.getCategory()) {
+
+                                player.setArenas(new ArrayList<>(playerArenas));
+                                playerRepository.save(player);
+                            } else {
+                                throw new IllegalArgumentException("Vous n'avez pas l'âge requis pour le tournois");
+
+                            }
+
+                        } else {
+                            throw new IllegalArgumentException("Le tournoi est déjà en cours");
                         }
-
-                        if(player.getCategory() == arena.getCategory()){
-
-                            player.setArenas(new ArrayList<>(playerArenas));
-                            playerRepository.save(player);
-                        }else {
-                            throw new IllegalArgumentException("Vous n'avez pas l'âge requis pour le tournois");
-
-                        }
-
-                    }else {
-                        throw new IllegalArgumentException("Le tournoi est déjà en cours");
+                    } else {
+                        throw new IllegalArgumentException("Votre genre ne permets pas de vous inscrire à ce tournoi");
                     }
-                }
-                else {
-                    throw new IllegalArgumentException("Votre genre ne permets pas de vous inscrire à ce tournoi");
+
+                } else {
+                    throw new IllegalArgumentException("Vous n'avez pas assez de badge pour vous inscrire à ce tournoi");
                 }
 
-            }else{
-                throw new IllegalArgumentException("Vous n'avez pas assez de badge pour vous inscrire à ce tournoi");
-            }
-
-        }else {
+            } else {
                 throw new IllegalArgumentException("Nombre de place au tournoi atteint");
             }
         }
@@ -119,12 +118,70 @@ public class PlayerServiceImpl implements PlayerService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(form.getPseudo(), form.getPassword()));
         Player player = playerRepository.findByPseudo(form.getPseudo()).get();
 
-        String token = jwtProvider.generateToken(player.getUsername(), player.getMail(),   List.copyOf(player.getRole()));
-        AuthDTO authDTO = AuthDTO.create(token, player.getPseudo(), player.getRole() );
+        String token = jwtProvider.generateToken(player.getUsername(), player.getMail(), List.copyOf(player.getRole()));
+        AuthDTO authDTO = AuthDTO.create(token, player.getPseudo(), player.getRole());
         return authDTO;
 
     }
 
 
+    @Override
+    public void register(Long id, Long arenaId) {
+        Player player = getOne(id);
+        List<Arena> playerArenas = arenaRepository.findAllById(Collections.singleton(arenaId));
+        LocalDate date = LocalDate.now();
+        for (Arena arena : playerArenas) {
 
-}
+            if (arena.getNbPlayer() < arena.getNbMaxPlayer()) {
+                arena.incrementNbPlayer();
+
+                if (arena.getBadgeMin() <= player.getBadges()) {
+                    if ((player.getGender() == Gender.female && arena.getWomenOnly()) || (player.getGender() == Gender.male && !arena.getWomenOnly())) {
+                        if (arena.getStatus() != Status.inProgress && !arena.getClosingDate().isBefore(date)) {
+                            LocalDate birthdate = player.getBirthdate();
+                            LocalDate endDate = arena.getClosingDate();
+
+                            Period agePeriod = Period.between(birthdate, endDate);
+
+                            int age = agePeriod.getYears();
+
+                            if (age < 18) {
+                                player.setCategory(Category.Junior);
+                            } else if (age >= 18 && age < 60) {
+                                player.setCategory(Category.Senior);
+                            } else {
+                                player.setCategory(Category.Veteran);
+                            }
+                            if (player.getCategory() == arena.getCategory()) {
+                                if (arena != null) {
+                                    if (!arena.getPlayers().stream().anyMatch(p -> player.getPlayerId().equals(player.getPlayerId()))) {
+                                        player.setArenas(new ArrayList<>(playerArenas));
+                                        playerRepository.save(player);
+
+                                    } else {
+                                        throw new IllegalArgumentException("le joueur est déjà présent dans le tournoi");
+                                    }
+                                }
+                            } else {
+                                    throw new IllegalArgumentException("Vous n'avez pas l'âge requis pour le tournois");
+                                }
+                            } else {
+                                throw new IllegalArgumentException("Le tournoi est déjà en cours");
+                            }
+                        } else {
+                            throw new IllegalArgumentException("Votre genre ne permets pas de vous inscrire à ce tournoi");
+                        }
+
+                    } else {
+                        throw new IllegalArgumentException("Vous n'avez pas assez de badge pour vous inscrire à ce tournoi");
+                    }
+
+                } else {
+                    throw new IllegalArgumentException("Nombre de place au tournoi atteint");
+                }
+
+            }
+        }
+    }
+
+

@@ -10,4 +10,6 @@ public interface PlayerService {
     AuthDTO login(LoginForm form);
 
     Player getOne(Long id);
+
+    void register(Long id, Long ArenaId);
 }

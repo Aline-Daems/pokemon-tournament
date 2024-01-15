@@ -5,10 +5,7 @@ import be.techonbel.pokemontournament.pl.dtos.AuthDTO;
 import be.techonbel.pokemontournament.pl.forms.LoginForm;
 import be.techonbel.pokemontournament.pl.forms.Playerform;
 //import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/player")
@@ -29,6 +26,12 @@ public class PlayerController {
     @PostMapping("/login")
     public AuthDTO login(@RequestBody LoginForm form){
         return playerService.login(form);
+    }
+
+    @PutMapping("/register/{id}/{arenaId}")
+    public void register(@PathVariable Long id, Long arenaId ){
+
+         playerService.register(id, arenaId);
     }
 
 }
