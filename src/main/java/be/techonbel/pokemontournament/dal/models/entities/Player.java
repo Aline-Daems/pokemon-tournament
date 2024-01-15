@@ -1,5 +1,6 @@
 package be.techonbel.pokemontournament.dal.models.entities;
 
+import be.techonbel.pokemontournament.dal.models.entities.enums.Category;
 import be.techonbel.pokemontournament.dal.models.entities.enums.Gender;
 import be.techonbel.pokemontournament.dal.models.entities.enums.Roles;
 import jakarta.persistence.*;
@@ -34,6 +35,8 @@ public class Player  implements UserDetails {
     private Gender gender;
     @Value("0")
     private int badges;
+    @Enumerated(EnumType.STRING)
+    private Category category;
     @Enumerated(value = EnumType.STRING)
     private List<Roles> role;
     @ManyToMany

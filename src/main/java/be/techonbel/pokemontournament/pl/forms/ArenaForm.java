@@ -1,6 +1,7 @@
 package be.techonbel.pokemontournament.pl.forms;
 
 import be.techonbel.pokemontournament.dal.models.entities.Player;
+import be.techonbel.pokemontournament.dal.models.entities.enums.Category;
 import be.techonbel.pokemontournament.dal.models.entities.enums.Status;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -15,7 +16,7 @@ public record ArenaForm(
 
         int nbMaxPlayer,
         int nbPlayer,
-        String type,
+        Category category,
         Status status,
         int round,
         int badgeMin,

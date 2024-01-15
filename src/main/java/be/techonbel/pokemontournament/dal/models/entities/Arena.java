@@ -1,5 +1,6 @@
 package be.techonbel.pokemontournament.dal.models.entities;
 
+import be.techonbel.pokemontournament.dal.models.entities.enums.Category;
 import be.techonbel.pokemontournament.dal.models.entities.enums.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -26,7 +27,8 @@ public class Arena {
     @Max(32)
     private int nbMaxPlayer;
     private int nbPlayer;
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private Category category;
     @Enumerated(EnumType.STRING)
     private Status status = Status.pending;
     private int round;
@@ -42,6 +44,8 @@ public class Arena {
 
 
     public void incrementNbPlayer(){
+
+
         this.nbPlayer++;
     }
 

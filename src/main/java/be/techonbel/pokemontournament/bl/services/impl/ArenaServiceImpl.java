@@ -44,7 +44,7 @@ public class ArenaServiceImpl implements ArenaService {
         Arena arena = new Arena();
 
         arena.setCity(form.city());
-        arena.setType(form.type());
+        arena.setCategory(form.category());
         arena.setNbMaxPlayer(form.nbMaxPlayer());
         if (form.nbMinPlayer()>form.nbMaxPlayer())
             throw  new RuntimeException("Yann pas content");
