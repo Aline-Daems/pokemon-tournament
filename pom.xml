@@ -88,6 +88,14 @@
             <artifactId>spring-security-web</artifactId>
             <version>6.2.1</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+
+            <scope>test</scope>
+        </dependency>
+
+
     </dependencies>
 
     <build>

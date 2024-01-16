@@ -42,6 +42,27 @@ public class Arena {
     @ManyToMany(mappedBy = "arenas")
     private List<Player> players = new ArrayList<>();
 
+    public Arena(Long arenaId, String city, int nbMinPlayer, int nbMaxPlayer, int nbPlayer, Category category, Status status, int round, int badgeMin, int badgeMax, Boolean womenOnly, LocalDate closingDate, LocalDate creationDate, LocalDate updateDate) {
+        this.arenaId = arenaId;
+        this.city = city;
+        this.nbMinPlayer = nbMinPlayer;
+        this.nbMaxPlayer = nbMaxPlayer;
+        this.nbPlayer = nbPlayer;
+        this.category = category;
+        this.status = status;
+        this.round = round;
+        this.badgeMin = badgeMin;
+        this.badgeMax = badgeMax;
+        this.womenOnly = womenOnly;
+        this.closingDate = closingDate;
+        this.creationDate = creationDate;
+        this.updateDate = updateDate;
+
+    }
+
+    public Arena() {
+
+    }
 
     public void incrementNbPlayer(){
 

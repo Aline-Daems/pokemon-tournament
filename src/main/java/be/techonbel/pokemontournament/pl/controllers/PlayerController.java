@@ -34,4 +34,10 @@ public class PlayerController {
          playerService.register(id, arenaId);
     }
 
+    @DeleteMapping("/unregister/{id}/{arenaId}")
+    public void unregister(@PathVariable Long id, Long arenaId){
+        playerService.unregister(id,arenaId);
+
+    }
+
 }

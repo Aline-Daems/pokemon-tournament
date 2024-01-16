@@ -7,5 +7,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Optional;
 
 public interface PlayerRepository extends JpaRepository<Player, Long> {
-   Optional<Player> findByPseudo(String username);
+   Optional<Player> findByPseudoOrMail(String username, String mail);
+
+
+   Optional<Player> findByPlayerId(Long id);
 }

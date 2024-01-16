@@ -101,92 +101,96 @@ public class ArenaServiceImpl implements ArenaService {
         
         LocalDate date = LocalDate.now();
 
-        if(arena.getNbMinPlayer() > arena.getNbPlayer() && arena.getClosingDate().isBefore(date)){
+        if(arena.getNbMinPlayer() > arena.getNbPlayer() || arena.getClosingDate().isBefore(date) || arena.getStatus() == Status.inProgress || arena.getStatus() == Status.finished){
             throw new IllegalArgumentException("Yann pas content!");
 
-        }
-
-        arena.setStatus(Status.inProgress);
-        arena.setRound(1);
-        arena.setUpdateDate(date);
-
-        arenaRepository.save(arena);
-
-        Match match = new Match();
-
-        match.setArena(arena);
-
-        Random random = new Random();
-        int playerRandomIndex = random.nextInt(arena.getPlayers().size());
-        Player playerId = arena.getPlayers().get(playerRandomIndex);
-
-        match.setPlayer1(playerId);
-        int playerRandomIndex2;
-        do{
-            playerRandomIndex2= random.nextInt(arena.getPlayers().size());
-        } while (playerRandomIndex2 == playerRandomIndex);
-
-        Player playerId2 = arena.getPlayers().get(playerRandomIndex2);
-
-        if(playerId2 != playerId){
-            match.setPlayer2(playerId2);
         }else {
+            arena.setStatus(Status.inProgress);
+            arena.setRound(1);
+            arena.setUpdateDate(date);
 
+            arenaRepository.save(arena);
+
+            List<Player> players = arena.getPlayers();
+
+            for (int i = 0; i< players.size(); i++) {
+                for (int j = i+1; j<players.size(); j++){
+                    Match match1 = new Match();
+                    match1.setPlayer1(players.get(i));
+                    match1.setPlayer2(players.get(j));
+                    match1.setArena(arena);
+
+                    Match match2 = new Match();
+                    match2.setPlayer1(players.get(j));
+                    match2.setPlayer2(players.get(i));
+                    match2.setArena(arena);
+
+                    List<String> pokemons = new ArrayList<>();
+
+                    pokemons.add("Pikachu");
+                    pokemons.add("Bulbizarre");
+                    pokemons.add("Carapuce");
+                    pokemons.add("Salamèche");
+                    pokemons.add("Rondoudou");
+                    pokemons.add("Miaouss");
+                    pokemons.add("Psykokwak");
+                    pokemons.add("Nosferapti");
+                    pokemons.add("Évoli");
+                    pokemons.add("Ronflex");
+                    pokemons.add("Feunard");
+                    pokemons.add("Léviator");
+                    pokemons.add("Abra");
+                    pokemons.add("Machoc");
+                    pokemons.add("Fantominus");
+                    pokemons.add("Onix");
+                    pokemons.add("Soporifik");
+                    pokemons.add("Osselait");
+                    pokemons.add("Kicklee");
+                    pokemons.add("Tygnon");
+
+                    Random random = new Random();
+
+                    int index = random.nextInt(pokemons.size());
+                    String pokemonChoisi1 = pokemons.get(index);
+
+                    match1.setPokemonPlayer(pokemonChoisi1);
+
+                    int index2 = random.nextInt(pokemons.size());
+                    String pokemonChoisi2 = pokemons.get(index2);
+                    match1.setPokemonChampion(pokemonChoisi2);
+
+
+                    int index3 = random.nextInt(pokemons.size());
+                    String pokemonChoisi3 = pokemons.get(index3);
+
+                    match2.setPokemonPlayer(pokemonChoisi3);
+
+                    int index4 = random.nextInt(pokemons.size());
+                    String pokemonChoisi4 = pokemons.get(index4);
+                    match2.setPokemonChampion(pokemonChoisi4);
+
+                    List<String> resultats = new ArrayList<>();
+
+                    resultats.add("Victoire du Champion" );
+                    resultats.add("Victoire du challenger");
+                    resultats.add("Pas encore joué");
+                    resultats.add("égalité");
+
+                    int indexResult = random.nextInt(resultats.size());
+                    String finalResult1 =  resultats.get(indexResult);
+
+                    int indexResult2 = random.nextInt(resultats.size());
+                    String finalResult2 =  resultats.get(indexResult2);
+                    match1.setResult(finalResult1);
+                    match2.setResult(finalResult2);
+
+                    matchRepository.save(match1);
+                    matchRepository.save(match2);
+
+                }
+
+            }
         }
-
-
-        List<String> pokemons = new ArrayList<>();
-
-        pokemons.add("Pikachu");
-        pokemons.add("Bulbizarre");
-        pokemons.add("Carapuce");
-        pokemons.add("Salamèche");
-        pokemons.add("Rondoudou");
-        pokemons.add("Miaouss");
-        pokemons.add("Psykokwak");
-        pokemons.add("Nosferapti");
-        pokemons.add("Évoli");
-        pokemons.add("Ronflex");
-        pokemons.add("Feunard");
-        pokemons.add("Léviator");
-        pokemons.add("Abra");
-        pokemons.add("Machoc");
-        pokemons.add("Fantominus");
-        pokemons.add("Onix");
-        pokemons.add("Soporifik");
-        pokemons.add("Osselait");
-        pokemons.add("Kicklee");
-        pokemons.add("Tygnon");
-
-
-
-        int index = random.nextInt(pokemons.size());
-        String pokemonChoisi1 = pokemons.get(index);
-
-        match.setPokemonPlayer(pokemonChoisi1);
-
-        int index2 = random.nextInt(pokemons.size());
-        String pokemonChoisi2 = pokemons.get(index2);
-        match.setPokemonChampion(pokemonChoisi2);
-
-
-        List<String> resultats = new ArrayList<>();
-
-        resultats.add(pokemonChoisi1);
-        resultats.add(pokemonChoisi2);
-        resultats.add("Pas encore joué");
-        resultats.add("égalité");
-
-        int indexResult = random.nextInt(resultats.size());
-        String finalResult =  resultats.get(indexResult);
-
-        match.setResult(finalResult);
-
-
-
-
-        matchRepository.save(match);
-
 
     }
 }

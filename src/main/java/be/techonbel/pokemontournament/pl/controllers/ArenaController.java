@@ -49,6 +49,7 @@ public class ArenaController {
     @PutMapping("/start/{id}")
     public void start(@PathVariable Long id) {
         arenaService.start(id);
+
     }
 
 }

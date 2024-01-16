@@ -14,6 +14,7 @@ import be.techonbel.pokemontournament.pl.forms.LoginForm;
 import be.techonbel.pokemontournament.pl.forms.Playerform;
 import jakarta.persistence.Cache;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.cglib.core.Local;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +25,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PlayerServiceImpl implements PlayerService {
@@ -108,15 +110,15 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public Player getOne(Long id) {
-        return playerRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    public Optional<Player> getOne(Long id) {
+        return playerRepository.findById(id);
     }
 
     @Override
     public AuthDTO login(LoginForm form) {
 
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(form.getPseudo(), form.getPassword()));
-        Player player = playerRepository.findByPseudo(form.getPseudo()).get();
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(form.getLogin(), form.getPassword()));
+        Player player = playerRepository.findByPseudoOrMail(form.getLogin(), form.getLogin()).get();
 
         String token = jwtProvider.generateToken(player.getUsername(), player.getMail(), List.copyOf(player.getRole()));
         AuthDTO authDTO = AuthDTO.create(token, player.getPseudo(), player.getRole());
@@ -125,63 +127,85 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
 
+
     @Override
     public void register(Long id, Long arenaId) {
-        Player player = getOne(id);
-        List<Arena> playerArenas = arenaRepository.findAllById(Collections.singleton(arenaId));
+        Player player = getOne(id).orElseThrow();
+        List<Arena> playersArenas = arenaRepository.findAllById(Collections.singleton(arenaId));
         LocalDate date = LocalDate.now();
-        for (Arena arena : playerArenas) {
 
-            if (arena.getNbPlayer() < arena.getNbMaxPlayer()) {
-                arena.incrementNbPlayer();
+        for (Arena arena : playersArenas) {
 
-                if (arena.getBadgeMin() <= player.getBadges()) {
-                    if ((player.getGender() == Gender.female && arena.getWomenOnly()) || (player.getGender() == Gender.male && !arena.getWomenOnly())) {
-                        if (arena.getStatus() != Status.inProgress && !arena.getClosingDate().isBefore(date)) {
-                            LocalDate birthdate = player.getBirthdate();
-                            LocalDate endDate = arena.getClosingDate();
+            if(arena.getNbPlayer() >= arena.getNbMaxPlayer()){
+                throw new IllegalArgumentException("Nombre de places au tournoi atteint");
+            }
 
-                            Period agePeriod = Period.between(birthdate, endDate);
+            arena.incrementNbPlayer();
 
-                            int age = agePeriod.getYears();
+            if (arena.getBadgeMin() > player.getBadges()){
+                throw new IllegalArgumentException("Vous n'avez pas le nombre de badge requis pour ce tournoi");
+            } else if (arena.getBadgeMax() < player.getBadges()) {
 
-                            if (age < 18) {
-                                player.setCategory(Category.Junior);
-                            } else if (age >= 18 && age < 60) {
-                                player.setCategory(Category.Senior);
-                            } else {
-                                player.setCategory(Category.Veteran);
-                            }
-                            if (player.getCategory() == arena.getCategory()) {
-                                if (arena != null) {
-                                    if (!arena.getPlayers().stream().anyMatch(p -> player.getPlayerId().equals(player.getPlayerId()))) {
-                                        player.setArenas(new ArrayList<>(playerArenas));
-                                        playerRepository.save(player);
+                throw new IllegalArgumentException("Vous avez trop de badge pour ce tournoi");
+            }
 
-                                    } else {
-                                        throw new IllegalArgumentException("le joueur est déjà présent dans le tournoi");
-                                    }
-                                }
-                            } else {
-                                    throw new IllegalArgumentException("Vous n'avez pas l'âge requis pour le tournois");
-                                }
-                            } else {
-                                throw new IllegalArgumentException("Le tournoi est déjà en cours");
-                            }
-                        } else {
-                            throw new IllegalArgumentException("Votre genre ne permets pas de vous inscrire à ce tournoi");
-                        }
+            if(arena.getStatus() == Status.inProgress || arena.getClosingDate().isBefore(date)){
+                throw new IllegalArgumentException("Le tournoi est déjà en cours ou la date de fermeture de tournoi est déjà dépassée");
+            }
 
-                    } else {
-                        throw new IllegalArgumentException("Vous n'avez pas assez de badge pour vous inscrire à ce tournoi");
-                    }
+            if(player.getGender() == Gender.male && arena.getWomenOnly() ){
 
-                } else {
-                    throw new IllegalArgumentException("Nombre de place au tournoi atteint");
-                }
+                throw  new IllegalArgumentException("Votre genre ne vous permets pas d'accéder à ce tournoi");
+            }
+
+            LocalDate birthdate = player.getBirthdate();
+            LocalDate endDate = arena.getClosingDate();
+
+            Period agePeriod = Period.between(birthdate, endDate);
+
+            int age = agePeriod.getYears();
+
+
+            if (age < 18) {
+                player.setCategory(Category.Junior);
+            } else if (age < 60) {
+                player.setCategory(Category.Senior);
+            } else {
+                player.setCategory(Category.Veteran);
+            }
+
+            if(player.getCategory() != arena.getCategory()){
+                throw new IllegalArgumentException("Vous n'avez pas l'âge pour ce tournoi");
 
             }
+            if(arena.getPlayers().stream().anyMatch(p -> p.getPlayerId().equals(player.getPlayerId()))){
+                throw new IllegalArgumentException("Le joueur est déjà présent dans le tournoi");
+            }
+
+            player.setArenas(new ArrayList<>(playersArenas));
+            playerRepository.save(player);
         }
     }
+
+    @Override
+    public void unregister(Long id, Long arenaId) {
+        Player player = getOne(id).orElseThrow(() -> new EntityNotFoundException("Id non trouvé"));
+        Arena arena = arenaRepository.findById(arenaId).orElseThrow(() -> new EntityNotFoundException("Id non trouvé"));
+
+       try {
+           arena.getPlayers().remove(player);
+           player.getArenas().remove(arena);
+           arenaRepository.save(arena);
+           playerRepository.save(player);
+       }catch (IllegalArgumentException exception){
+            throw new IllegalArgumentException("Arene ou joueur non trouvé");
+       }
+
+
+    }
+}
+
+
+
 
 

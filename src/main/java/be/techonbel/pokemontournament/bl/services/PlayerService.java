@@ -5,11 +5,15 @@ import be.techonbel.pokemontournament.pl.dtos.AuthDTO;
 import be.techonbel.pokemontournament.pl.forms.LoginForm;
 import be.techonbel.pokemontournament.pl.forms.Playerform;
 
+import java.util.Optional;
+
 public interface PlayerService {
     void create(Playerform form);
     AuthDTO login(LoginForm form);
 
-    Player getOne(Long id);
+    Optional<Player> getOne(Long id);
 
     void register(Long id, Long ArenaId);
+
+    void unregister(Long id, Long ArenaId);
 }

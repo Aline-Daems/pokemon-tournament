@@ -17,7 +17,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return playerRepository.findByPseudo(username)
+        return playerRepository.findByPseudoOrMail(username, username)
                 .orElseThrow(() -> new UsernameNotFoundException("Pseudo non trouvé "));
     }
 }

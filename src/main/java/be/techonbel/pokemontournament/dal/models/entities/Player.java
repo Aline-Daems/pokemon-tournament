@@ -5,8 +5,10 @@ import be.techonbel.pokemontournament.dal.models.entities.enums.Gender;
 import be.techonbel.pokemontournament.dal.models.entities.enums.Roles;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Player  implements UserDetails {
 
     @Id
@@ -40,8 +44,10 @@ public class Player  implements UserDetails {
     @Enumerated(value = EnumType.STRING)
     private List<Roles> role;
     @ManyToMany
-    @JoinTable(name="register", joinColumns = @JoinColumn(name="arenaId"), inverseJoinColumns = @JoinColumn(name="playerId"))
+    @JoinTable(name="register", joinColumns = @JoinColumn(name="playerId"), inverseJoinColumns = @JoinColumn(name="arenaId"))
     private List<Arena> arenas = new ArrayList<>();
+
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
