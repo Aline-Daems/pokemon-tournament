@@ -9,46 +9,63 @@ import be.techonbel.pokemontournament.dal.models.entities.enums.Roles;
 import be.techonbel.pokemontournament.dal.models.entities.enums.Status;
 
 
+import be.techonbel.pokemontournament.dal.repositories.ArenaRepository;
 import be.techonbel.pokemontournament.dal.repositories.PlayerRepository;
 import be.techonbel.pokemontournament.pl.dtos.PlayerDTOAll;
-import org.junit.Test;
+
+import be.techonbel.pokemontournament.pl.forms.Playerform;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Mockito;
+
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.cglib.core.Local;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 public class PlayerServiceTest {
-    @Mock
-    private PlayerRepository playerRepository;
     @InjectMocks
     private PlayerServiceImpl playerService;
+    @Mock
+    private PlayerRepository playerRepository;
+
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+    @Mock
+    private ArenaRepository arenaRepository;
+
 
     private Player player;
 
     private PlayerDTOAll playerDTO;
 
+    private Playerform form;
+
     @BeforeEach
     void setUp() {
 
         List<Roles> roles = Arrays.asList(Roles.challenger);
-        Arena arena1 = new Arena(1L, "String", 2, 4, 2, Category.Junior, Status.pending, 0, 0, 0, true, LocalDate.now(), LocalDate.now(), LocalDate.now());
+        Arena arena1 = new Arena(1L, "String", 2, 4, 2, Category.Junior, Status.pending, 0, 1, 3, true, LocalDate.now().plusDays(5), LocalDate.now(), LocalDate.now());
         List<Arena> arenas = Arrays.asList(arena1);
-
-        playerDTO = new PlayerDTOAll(1L, "String850", "email@string.com", "string", LocalDate.now(), Gender.female, 1, Category.Junior, roles, arenas);
+        List<Long> arenaId = Arrays.asList(1L);
+        playerDTO = new PlayerDTOAll(1L, "String850", "email@string.com", "string", LocalDate.now(), Gender.female, 2, Category.Junior, roles, arenas);
         player = new Player(playerDTO.playerId(), playerDTO.pseudo(), playerDTO.mail(), playerDTO.password(), playerDTO.birthdate(), playerDTO.gender(), playerDTO.badges(), playerDTO.category(), playerDTO.role(), playerDTO.arenas());
 
+        form = new Playerform("String", "email@string.com","string", LocalDate.now(), Gender.female, 1, roles, arenaId);
     }
 
     @Test
@@ -56,11 +73,31 @@ public class PlayerServiceTest {
 
         //Arrange
 
-        when(playerRepository.findByPlayerId(anyLong())).thenReturn(Optional.of(player));
-
+        when(playerRepository.findById(anyLong())).thenReturn(Optional.of(player));
+        //act
         Optional<Player> search = playerService.getOne(1L);
-
+        // assert
         assertTrue(search.isPresent());
         assertEquals(player, search.get());
     }
+
+    @Test
+    void getByIt_when_not_found(){
+        when(playerRepository.findById(anyLong())).thenReturn(Optional.empty());
+        Optional<Player> search = playerService.getOne(1L);
+
+        assertFalse(search.isPresent());
+    }
+
+//    @Test
+//    void create_when_ok(){
+//
+//        when(playerRepository.save(any(Player.class))).thenReturn(player);
+//
+//        playerService.create(form);
+//
+//        verify(playerRepository, times(1)).save(any(Player.class));
+//
+//
+//    }
 }

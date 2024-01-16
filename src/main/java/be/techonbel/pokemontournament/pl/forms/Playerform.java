@@ -3,6 +3,9 @@ package be.techonbel.pokemontournament.pl.forms;
 import be.techonbel.pokemontournament.dal.models.entities.enums.Gender;
 import be.techonbel.pokemontournament.dal.models.entities.enums.Roles;
 import jakarta.persistence.Column;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDate;
