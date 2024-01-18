@@ -1,14 +1,10 @@
 package be.techonbel.pokemontournament.pl.dtos;
 
 import be.techonbel.pokemontournament.dal.models.entities.Arena;
-import be.techonbel.pokemontournament.dal.models.entities.Player;
+
 import be.techonbel.pokemontournament.dal.models.entities.enums.Category;
 import be.techonbel.pokemontournament.dal.models.entities.enums.Status;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import org.springframework.beans.factory.annotation.Value;
+
 
 import java.time.LocalDate;
 import java.util.List;

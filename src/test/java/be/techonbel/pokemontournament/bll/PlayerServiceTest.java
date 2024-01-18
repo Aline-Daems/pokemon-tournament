@@ -61,7 +61,7 @@ public class PlayerServiceTest {
         List<Roles> roles = Arrays.asList(Roles.challenger);
         Arena arena1 = new Arena(1L, "String", 2, 4, 2, Category.Junior, Status.pending, 0, 1, 3, true, LocalDate.now().plusDays(5), LocalDate.now(), LocalDate.now());
         List<Arena> arenas = Arrays.asList(arena1);
-        List<Long> arenaId = Arrays.asList(1L);
+        List<Long> arenaId = List.of(1L);
         playerDTO = new PlayerDTOAll(1L, "String850", "email@string.com", "string", LocalDate.now(), Gender.female, 2, Category.Junior, roles, arenas);
         player = new Player(playerDTO.playerId(), playerDTO.pseudo(), playerDTO.mail(), playerDTO.password(), playerDTO.birthdate(), playerDTO.gender(), playerDTO.badges(), playerDTO.category(), playerDTO.role(), playerDTO.arenas());
 
@@ -89,15 +89,34 @@ public class PlayerServiceTest {
         assertFalse(search.isPresent());
     }
 
-//    @Test
-//    void create_when_ok(){
-//
-//        when(playerRepository.save(any(Player.class))).thenReturn(player);
-//
-//        playerService.create(form);
-//
-//        verify(playerRepository, times(1)).save(any(Player.class));
-//
-//
-//    }
+    @Test
+    void create_when_ok(){
+
+        when(playerRepository.save(any(Player.class))).thenReturn(player);
+
+        playerService.create(form);
+
+        verify(playerRepository, times(1)).save(any(Player.class));
+
+
+    }
+
+    @Test
+    void delete_when_ok (){
+
+       // when(playerRepository.getOne(player.getPlayerId())).thenReturn(player);
+
+        when(playerRepository.findById(anyLong())).thenReturn(Optional.of(new Player()));
+
+        when(arenaRepository.findById(eq(1L))).thenReturn(Optional.of(new Arena()));
+
+       // doNothing().when(playerRepository).deleteById(anyLong());
+
+        playerService.unregister(1L, 1L);
+
+        verify(playerRepository, times(1)).findById(1L);
+        verify(arenaRepository, times(1)).findById(1L);
+
+        verify(playerRepository, times (1)).deleteById(1L);
+    }
 }

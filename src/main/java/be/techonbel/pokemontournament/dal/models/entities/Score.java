@@ -1,8 +1,12 @@
 package be.techonbel.pokemontournament.dal.models.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
+
+import java.math.BigDecimal;
 
 @Entity
+@Data
 public class Score {
 
     @Id
@@ -14,7 +18,12 @@ public class Score {
     private int defeat;
 
     private int equality;
+
     @ManyToOne
-    @JoinColumn(name="matchId")
-    Match match;
+    @JoinColumn(name="player_Id")
+    private Player player;
+
+    private double points;
+
+
 }

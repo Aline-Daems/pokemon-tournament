@@ -189,12 +189,16 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public void unregister(Long id, Long arenaId) {
-        Player player = getOne(id).orElseThrow(() -> new EntityNotFoundException("Id non trouvé"));
-        Arena arena = arenaRepository.findById(arenaId).orElseThrow(() -> new EntityNotFoundException("Id non trouvé"));
+        Player player = getOne(id).orElseThrow(() -> new EntityNotFoundException("Id player non trouvé"));
+        Arena arena = arenaRepository.findById(arenaId).orElseThrow(() -> new EntityNotFoundException("Id arene non trouvé"));
 
        try {
+
+
            arena.getPlayers().remove(player);
            player.getArenas().remove(arena);
+
+
            arenaRepository.save(arena);
            playerRepository.save(player);
        }catch (IllegalArgumentException exception){
