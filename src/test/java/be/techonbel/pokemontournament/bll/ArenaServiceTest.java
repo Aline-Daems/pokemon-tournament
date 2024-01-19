@@ -46,8 +46,7 @@ public class ArenaServiceTest {
 
     @BeforeEach
     void setUp(){
-        List<Arena> arenas = Arrays.asList(arena);
-        List<Roles> roles = Arrays.asList(Roles.challenger);
+
         playerDTO = new PlayerDTO( 1L,"String850");
 
         player = new Player(playerDTO.pseudo());
@@ -72,6 +71,16 @@ public class ArenaServiceTest {
         assertEquals(arena, search.get());
     }
 
+
+    @Test
+    void getId_when_not_found(){
+        when(arenaRepository.findByArenaIdWithPlayer(anyLong())).thenReturn(Optional.empty());
+
+        Optional<Arena> search = arenaService.getOne(1L);
+
+        assertFalse(search.isPresent());
+
+    }
     @Test
     void when_create_ok(){
         when(arenaRepository.save(any(Arena.class))).thenReturn(arena);
@@ -82,10 +91,38 @@ public class ArenaServiceTest {
     }
 
     @Test
+    void when_create_null(){
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> arenaService.create(null));
+
+        String exepctedMessage = "Le formulaire ne peut pas être vide";
+
+        String actualMessage = exception.getMessage();
+
+        assertEquals(exepctedMessage, actualMessage);
+
+    }
+
+    @Test
     void when_delete_ok(){
         when(arenaRepository.findById(anyLong())).thenReturn(Optional.of(arena));
         arenaService.delete(1L);
         verify(arenaRepository, times(1)).findById(1L);
 
     }
+    @Test
+    void getAll(){
+
+        List<Arena> arenaList = Arrays.asList(arena, arena, arena);
+
+        when(arenaRepository.findTop10AllByOrderByUpdateDateDesc()).thenReturn(arenaList);
+
+        List<Arena> result = arenaService.getAll();
+
+        assertEquals(arenaList, result);
+        verify(arenaRepository, times(1)).findTop10AllByOrderByUpdateDateDesc();
+    }
+
+
+
 }

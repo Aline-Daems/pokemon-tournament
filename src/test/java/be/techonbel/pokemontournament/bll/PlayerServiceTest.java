@@ -84,7 +84,7 @@ public class PlayerServiceTest {
     }
 
     @Test
-    void getByIt_when_not_found(){
+    void getById_when_not_found(){
         when(playerRepository.findById(anyLong())).thenReturn(Optional.empty());
         Optional<Player> search = playerService.getOne(1L);
 
@@ -101,7 +101,16 @@ public class PlayerServiceTest {
 
 
     }
+    @Test
+    void when_create_null(){
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> playerService.create(null) );
 
+        String exepctedMessage = "Le formulaire ne peut pas être vide";
+
+        String actualMessage = exception.getMessage();
+
+        assertEquals(exepctedMessage, actualMessage);
+    }
 
     @Test
     void register_when_ok(){
@@ -118,9 +127,9 @@ public class PlayerServiceTest {
 
     @Test
     void delete_when_ok (){
-
+        // quand playerService.getone(nimportequelid) alors retourne un optional de player
         when(playerService.getOne(anyLong())).thenReturn(Optional.of(player));
-
+        // quand arenarepository.findbyid(estegalà1L) alors retourne un optional de Arena
         when(arenaRepository.findById(eq(1L))).thenReturn(Optional.of(new Arena()));
 
         playerService.unregister(1L, 1L);
