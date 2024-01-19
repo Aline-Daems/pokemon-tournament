@@ -59,7 +59,7 @@ public class ArenaServiceImpl implements ArenaService {
         arena.setRound(form.round());
         arena.setBadgeMin(form.badgeMin());
         arena.setBadgeMax(form.badgeMax());
-        if (form.womenOnly() == null) {
+        if (form.womenOnly() == null || form.womenOnly() == false) {
             arena.setWomenOnly(false);
         } else {
             arena.setWomenOnly(true);
@@ -69,24 +69,23 @@ public class ArenaServiceImpl implements ArenaService {
         LocalDate closingDate = arena.getCreationDate();
         arena.setClosingDate(closingDate.plusDays(form.nbPlayer()));
 
-        arena.setPlayers(new ArrayList<>(playerRepository.findAllById((form.playerId()))));
 
         arenaRepository.save(arena);
 
     }
 
     @Override
-    public Arena getOne(Long id) {
-        Arena arena = arenaRepository.findByArenaIdWithPlayer(id).orElseThrow(EntityNotFoundException::new);
+    public Optional<Arena> getOne(Long id) {
+        return arenaRepository.findByArenaIdWithPlayer(id);
 
-        return arena;
+
 
     }
 
     @Override
     public void delete(Long id) {
-        Arena arena = arenaRepository.getOne(id);
-        if (arena.getStatus() == Status.inProgress)
+        Optional<Arena> arena = arenaRepository.findById(id);
+        if (arena.get().getStatus() == Status.inProgress)
             throw new IllegalArgumentException("Yann pas content!");
 
         arenaRepository.deleteById(id);

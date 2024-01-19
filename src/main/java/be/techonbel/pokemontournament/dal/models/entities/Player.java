@@ -48,6 +48,9 @@ public class Player  implements UserDetails {
     private List<Arena> arenas = new ArrayList<>();
 
 
+    public Player(String pseudo) {
+        this.pseudo = pseudo;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

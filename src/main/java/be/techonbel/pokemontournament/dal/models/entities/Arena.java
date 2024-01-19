@@ -5,8 +5,10 @@ import be.techonbel.pokemontournament.dal.models.entities.enums.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
@@ -16,6 +18,8 @@ import java.util.List;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Arena {
 
     @Id
@@ -60,9 +64,7 @@ public class Arena {
 
     }
 
-    public Arena() {
 
-    }
 
     public void incrementNbPlayer(){
 

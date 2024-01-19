@@ -5,11 +5,12 @@ import be.techonbel.pokemontournament.pl.dtos.ArenaGetOneDTO;
 import be.techonbel.pokemontournament.pl.forms.ArenaForm;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ArenaService {
     void create(ArenaForm form);
 
-    Arena getOne(Long id);
+    Optional<Arena> getOne(Long id);
     void delete(Long id);
     List<Arena> getAll();
     void start(Long id);

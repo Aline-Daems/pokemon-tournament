@@ -13,7 +13,6 @@ import java.util.List;
 public record ArenaForm(
         String city,
         int nbMinPlayer,
-
         int nbMaxPlayer,
         int nbPlayer,
         Category category,
@@ -23,7 +22,7 @@ public record ArenaForm(
         int badgeMax,
         Boolean womenOnly,
         LocalDate creationDate,
-        LocalDate updateDate,
-        List<Long> playerId
+        LocalDate updateDate
+
 ) {
 }
