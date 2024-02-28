@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/arena")
+@CrossOrigin
 public class ArenaController {
 
     private ArenaService arenaService;
@@ -22,7 +23,7 @@ public class ArenaController {
     public ArenaController(ArenaService arenaService) {
         this.arenaService = arenaService;
     }
-    @PreAuthorize("hasRole('champion')")
+    @PreAuthorize("isAnonymous()")
     @PostMapping("/create")
     public void createArena(@RequestBody ArenaForm form){
         arenaService.create(form);
