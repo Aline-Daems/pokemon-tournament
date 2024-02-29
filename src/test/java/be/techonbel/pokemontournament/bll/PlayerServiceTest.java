@@ -114,11 +114,11 @@ public class PlayerServiceTest {
 
     @Test
     void register_when_ok(){
-        when(playerService.getOne(anyLong())).thenReturn(Optional.of(player));
+        when(playerRepository.findByPseudoOrMail(anyString(), any())).thenReturn((Optional.of(player)));
 
         when(arenaRepository.findAllById(any())).thenReturn(List.of(arena1));
 
-        playerService.register(1L, 1L);
+        playerService.register("", 1L);
 
         verify(playerRepository, times(1)).save(any(Player.class));
     }
@@ -128,11 +128,11 @@ public class PlayerServiceTest {
     @Test
     void delete_when_ok (){
         // quand playerService.getone(nimportequelid) alors retourne un optional de player
-        when(playerService.getOne(anyLong())).thenReturn(Optional.of(player));
+        when(playerRepository.findByPseudoOrMail(anyString(), any())).thenReturn((Optional.of(player)));
         // quand arenarepository.findbyid(estegalà1L) alors retourne un optional de Arena
         when(arenaRepository.findById(eq(1L))).thenReturn(Optional.of(new Arena()));
 
-        playerService.unregister(1L, 1L);
+        playerService.unregister("", 1L);
 
         verify(playerRepository, times(1)).findById(1L);
         verify(arenaRepository, times(1)).findById(1L);

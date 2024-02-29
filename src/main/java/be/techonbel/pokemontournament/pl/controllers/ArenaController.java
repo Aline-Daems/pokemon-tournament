@@ -23,7 +23,7 @@ public class ArenaController {
     public ArenaController(ArenaService arenaService) {
         this.arenaService = arenaService;
     }
-    @PreAuthorize("isAnonymous()")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
     public void createArena(@RequestBody ArenaForm form){
         arenaService.create(form);
@@ -33,7 +33,7 @@ public class ArenaController {
     public void deleteArena(@PathVariable Long id){
         arenaService.delete(id);
     }
-    @PreAuthorize("isAnonymous()")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/getAll")
     public ResponseEntity<List<ArenaDTO>> getAll(){
         List<Arena> arenas = arenaService.getAll();
@@ -42,13 +42,14 @@ public class ArenaController {
 
         return ResponseEntity.ok(dtos);
     }
-    @PreAuthorize("isAnonymous()")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public  ResponseEntity<ArenaDTO> getOne(@PathVariable Long id) {
         return ResponseEntity.ok(ArenaDTO.fromEntity(arenaService.getOne(id).orElseThrow(()-> new EntityNotFoundException("Id non trouvé"))));
 
     }
-    @PreAuthorize("hasRole('champion')")
+    //@PreAuthorize("hasRole('champion')")
+    @PreAuthorize("isAnonymous()")
     @PutMapping("/start/{id}")
     public void start(@PathVariable Long id) {
         arenaService.start(id);

@@ -21,7 +21,7 @@ import java.util.List;
 public class JWTProvider {
 
     private static final String JWT_SECRET ="vQ6c35cj455yAcpy6hxABG6w5k8t98SzG338ALeUT7Kg77bf887r8f98A3rPjMQZEbB2pyYA2Mk8ebDLLL2SWM8Wit";
-    private static final long EXPIRES_AT = 900;
+    private static final long EXPIRES_AT = 900_000;
     private static final String AUTH_HEADER = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
 

@@ -129,8 +129,9 @@ public class PlayerServiceImpl implements PlayerService {
 
 
     @Override
-    public void register(Long id, Long arenaId) {
-        Player player = getOne(id).orElseThrow();
+    public void register(String username, Long arenaId) {
+        Player player = playerRepository.findByPseudoOrMail(username, null).orElseThrow();
+
         List<Arena> playersArenas = arenaRepository.findAllById(Collections.singleton(arenaId));
         LocalDate date = LocalDate.now();
 
@@ -188,8 +189,8 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public void unregister(Long id, Long arenaId) {
-        Player player = getOne(id).orElseThrow(() -> new EntityNotFoundException("Id player non trouvé"));
+    public void unregister(String username, Long arenaId) {
+        Player player = playerRepository.findByPseudoOrMail(username, null).orElseThrow();
         Arena arena = arenaRepository.findById(arenaId).orElseThrow(() -> new EntityNotFoundException("Id arene non trouvé"));
 
        try {
@@ -206,6 +207,12 @@ public class PlayerServiceImpl implements PlayerService {
        }
 
 
+    }
+
+    @Override
+    public List<Arena> allArenas(String username) {
+
+       return playerRepository.findArenasByPlayerPseudo(username);
     }
 }
 

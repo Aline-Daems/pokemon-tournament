@@ -79,7 +79,6 @@ public class ArenaServiceImpl implements ArenaService {
         return arenaRepository.findByArenaIdWithPlayer(id);
 
 
-
     }
 
     @Override
@@ -105,8 +104,12 @@ public class ArenaServiceImpl implements ArenaService {
 
         LocalDate date = LocalDate.now();
 
-        if (arena.getNbMinPlayer() > arena.getNbPlayer() || arena.getClosingDate().isBefore(date) || arena.getStatus() == Status.inProgress || arena.getStatus() == Status.finished) {
-            throw new IllegalArgumentException("Yann pas content!");
+        if (arena.getNbMinPlayer() > arena.getNbPlayer()) {
+            throw new IllegalArgumentException("Le nombre minimal de joueur non atteint");
+        } else if (arena.getClosingDate().isBefore(date)) {
+            throw new IllegalArgumentException("La date de fermeture du tournoi n'est pas encore arrivée");
+        } else if (arena.getStatus() == Status.inProgress || arena.getStatus() == Status.finished) {
+            throw new IllegalArgumentException("Le tournoi est déjà en cours ou fini");
 
         } else {
             arena.setStatus(Status.inProgress);

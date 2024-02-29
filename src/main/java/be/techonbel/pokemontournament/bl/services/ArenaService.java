@@ -9,7 +9,6 @@ import java.util.Optional;
 
 public interface ArenaService {
     void create(ArenaForm form);
-
     Optional<Arena> getOne(Long id);
     void delete(Long id);
     List<Arena> getAll();
